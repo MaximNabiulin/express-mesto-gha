@@ -5,7 +5,7 @@ module.exports.getUsers = async (req, res) => {
     const users = await User.find({});
     return res.status(200).send({ data: users });
   } catch (err) {
-    return res.status(500).send({ message: 'Ошибка по умолчанию' });
+    return res.status(500).send({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -20,7 +20,7 @@ module.exports.getUserById = async (req, res) => {
     if (err.name === 'CastError') {
       return res.status(400).send({ message: 'Передан некорректный id пользователя' });
     }
-    return res.status(500).send({ message: 'Ошибка по умолчанию' });
+    return res.status(500).send({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -41,7 +41,7 @@ module.exports.createUser = async (req, res) => {
         message: 'Переданы некорректные данные при создании пользователя',
       });
     }
-    return res.status(500).send({ message: 'Ошибка по умолчанию' });
+    return res.status(500).send({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -65,7 +65,7 @@ module.exports.updateUserInfo = async (req, res) => {
         message: 'Переданы некорректные данные при обновлении профиля',
       });
     }
-    return res.status(500).send({ message: 'Ошибка по умолчанию' });
+    return res.status(500).send({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -89,6 +89,6 @@ module.exports.updateUserAvatar = async (req, res) => {
         message: 'Переданы некорректные данные при обновлении аватара',
       });
     }
-    return res.status(500).send({ message: 'Ошибка по умолчанию' });
+    return res.status(500).send({ message: 'На сервере произошла ошибка' });
   }
 };
