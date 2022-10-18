@@ -3,7 +3,7 @@ const User = require('../models/user');
 module.exports.getUsers = async (req, res) => {
   try {
     const users = await User.find({});
-    return res.status(201).send({ data: users });
+    return res.status(200).send({ data: users });
   } catch (err) {
     return res.status(500).send({ message: 'Ошибка по умолчанию' });
   }
@@ -30,6 +30,7 @@ module.exports.createUser = async (req, res) => {
   try {
     const user = await User.create({ name, about, avatar });
     return res.status(201).send({
+      _id: user._id,
       name: user.name,
       about: user.about,
       avatar: user.avatar,
@@ -57,7 +58,7 @@ module.exports.updateUserInfo = async (req, res) => {
     if (!user) {
       return res.status(404).send({ message: 'Пользователь по указанному id не найден' });
     }
-    return res.status(201).send({ data: user });
+    return res.status(200).send({ data: user });
   } catch (err) {
     if (err.name === 'ValidationError') {
       return res.status(400).send({
@@ -77,7 +78,7 @@ module.exports.updateUserAvatar = async (req, res) => {
     if (!user) {
       return res.status(404).send({ message: 'Пользователь по указанному id не найден' });
     }
-    return res.status(201).send({ avatar: user.avatar });
+    return res.status(200).send({ avatar: user.avatar });
   } catch (err) {
     if (err.name === 'ValidationError') {
       return res.status(400).send({

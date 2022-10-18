@@ -17,6 +17,7 @@ module.exports.createCard = async (req, res) => {
   try {
     const card = await Card.create({ name, link, owner });
     return res.status(201).send({
+      _id: card._id,
       name: card.name,
       link: card.link,
       owner: card.owner,
@@ -38,7 +39,8 @@ module.exports.deleteCard = async (req, res) => {
     if (!card) {
       return res.status(404).send({ message: 'Карточка с указанным id не найдена' });
     }
-    return res.send({ data: card });
+    // return res.status(200).send({ data: card });
+    return res.status(200).send(card);
   } catch (err) {
     if (err.name === 'CastError') {
       return res.status(400).send({ message: 'Передан некорректный id карточки' });
@@ -60,7 +62,8 @@ module.exports.likeCard = async (req, res) => {
     if (!card) {
       return res.status(404).send({ message: 'Передан несуществующий id карточки' });
     }
-    return res.status(200).send({ data: card });
+    // return res.status(200).send({ data: card });
+    return res.status(200).send(card);
   } catch (err) {
     if (err.name === 'CastError') {
       return res.status(400).send({ message: 'Переданы некорректные данные для постановки лайка' });
@@ -82,7 +85,8 @@ module.exports.dislikeCard = async (req, res) => {
     if (!card) {
       return res.status(404).send({ message: 'Передан несуществующий id карточки' });
     }
-    return res.status(200).send({ data: card });
+    // return res.status(200).send({ data: card });
+    return res.status(200).send(card);
   } catch (err) {
     if (err.name === 'CastError') {
       return res.status(400).send({ message: 'Переданы некорректные данные для снятия лайка' });
