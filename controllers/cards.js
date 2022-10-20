@@ -1,12 +1,16 @@
 const Card = require('../models/card');
 
+const CREATED_STATUS_CODE = 201;
+const CAST_ERROR_CODE = 400;
+const NOT_FOUND_ERROR_CODE = 404;
+const DEFAULT_ERROR_CODE = 500;
+
 module.exports.getCards = async (req, res) => {
   try {
-    const cards = await Card.find({})
-      .populate([{ path: 'user', strictPopulate: false }]);
+    const cards = await Card.find({});
     return res.send({ data: cards });
   } catch (err) {
-    return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return res.status(DEFAULT_ERROR_CODE).send({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -16,7 +20,7 @@ module.exports.createCard = async (req, res) => {
 
   try {
     const card = await Card.create({ name, link, owner });
-    return res.status(201).send({
+    return res.status(CREATED_STATUS_CODE).send({
       _id: card._id,
       name: card.name,
       link: card.link,
@@ -24,11 +28,11 @@ module.exports.createCard = async (req, res) => {
     });
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return res.status(400).send({
+      return res.status(CAST_ERROR_CODE).send({
         message: 'Переданы некорректные данные при создании карточки',
       });
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return res.status(DEFAULT_ERROR_CODE).send({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -37,15 +41,14 @@ module.exports.deleteCard = async (req, res) => {
   try {
     const card = await Card.findByIdAndRemove(cardId);
     if (!card) {
-      return res.status(404).send({ message: 'Карточка с указанным id не найдена' });
+      return res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Карточка с указанным id не найдена' });
     }
-    // return res.status(200).send({ data: card });
-    return res.status(200).send(card);
+    return res.send(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      return res.status(400).send({ message: 'Передан некорректный id карточки' });
+      return res.status(CAST_ERROR_CODE).send({ message: 'Передан некорректный id карточки' });
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return res.status(DEFAULT_ERROR_CODE).send({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -60,15 +63,14 @@ module.exports.likeCard = async (req, res) => {
       { new: true },
     );
     if (!card) {
-      return res.status(404).send({ message: 'Передан несуществующий id карточки' });
+      return res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Передан несуществующий id карточки' });
     }
-    // return res.status(200).send({ data: card });
-    return res.status(200).send(card);
+    return res.send(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      return res.status(400).send({ message: 'Переданы некорректные данные для постановки лайка' });
+      return res.status(CAST_ERROR_CODE).send({ message: 'Переданы некорректные данные для постановки лайка' });
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return res.status(DEFAULT_ERROR_CODE).send({ message: 'На сервере произошла ошибка' });
   }
 };
 
@@ -83,14 +85,13 @@ module.exports.dislikeCard = async (req, res) => {
       { new: true },
     );
     if (!card) {
-      return res.status(404).send({ message: 'Передан несуществующий id карточки' });
+      return res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Передан несуществующий id карточки' });
     }
-    // return res.status(200).send({ data: card });
-    return res.status(200).send(card);
+    return res.send(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      return res.status(400).send({ message: 'Переданы некорректные данные для снятия лайка' });
+      return res.status(CAST_ERROR_CODE).send({ message: 'Переданы некорректные данные для снятия лайка' });
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return res.status(DEFAULT_ERROR_CODE).send({ message: 'На сервере произошла ошибка' });
   }
 };
