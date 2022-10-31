@@ -6,7 +6,7 @@ const User = require('../models/user');
 
 const CastError = require('../errors/CastError');
 const ValidationError = require('../errors/ValidationError');
-const AuthorizationError = require('../errors/AuthorizationError');
+// const AuthorizationError = require('../errors/AuthorizationError');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 
@@ -27,13 +27,14 @@ module.exports.login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       res
-        .cookie('jwt', token, {
+        .cookie('authorization', token, {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
         })
         .end();
     })
-    .catch(next(new AuthorizationError('Ошибка Авторизации')));
+    .catch(next);
+  // .catch(next(new AuthorizationError('Ошибка Авторизации')));
   // .catch(() => {
   //   res.status(AUTH_ERROR_CODE).send({ message: 'Ошибка Авторизации' });
   // });
