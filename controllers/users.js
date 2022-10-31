@@ -6,7 +6,7 @@ const User = require('../models/user');
 
 const CastError = require('../errors/CastError');
 const ValidationError = require('../errors/ValidationError');
-// const AuthorizationError = require('../errors/AuthorizationError');
+const AuthorizationError = require('../errors/AuthorizationError');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 
@@ -20,6 +20,9 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      if (!email || !password) {
+        throw new AuthorizationError('Ошибка Авторизации');
+      }
       const token = jwt.sign(
         { _id: user._id },
         // NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
