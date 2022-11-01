@@ -11,10 +11,6 @@ const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 
 const CREATED_STATUS_CODE = 201;
-// const CAST_ERROR_CODE = 400;
-// const AUTH_ERROR_CODE = 401;
-// const NOT_FOUND_ERROR_CODE = 404;
-// const DEFAULT_ERROR_CODE = 500;
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -38,9 +34,6 @@ module.exports.login = (req, res, next) => {
     })
     .catch(next);
   // .catch(next(new AuthorizationError('Ошибка Авторизации')));
-  // .catch(() => {
-  //   res.status(AUTH_ERROR_CODE).send({ message: 'Ошибка Авторизации' });
-  // });
 };
 
 module.exports.getCurrentUser = async (req, res, next) => {
@@ -49,17 +42,11 @@ module.exports.getCurrentUser = async (req, res, next) => {
     const user = await User.findById(userId);
     if (!user) {
       throw new NotFoundError('Пользователь по указанному id не найден');
-      // return res.status(NOT_FOUND_ERROR_CODE).send(
-      //   { message: 'Пользователь по указанному id не найден' },
-      // );
     }
     return res.send({ data: user });
   } catch (err) {
     if (err.name === 'CastError') {
       return next(new CastError('Передан некорректный id пользователя'));
-      // return res.status(CAST_ERROR_CODE).send(
-      //   { message: 'Передан некорректный id пользователя' },
-      // );
     }
     return next(err);
   }
@@ -85,9 +72,6 @@ module.exports.getUserById = async (req, res, next) => {
   } catch (err) {
     if (err.name === 'CastError') {
       return next(new CastError('Передан некорректный id пользователя'));
-      // return res.status(CAST_ERROR_CODE).send(
-      //   { message: 'Передан некорректный id пользователя' }
-      // );
     }
     return next(err);
   }
@@ -125,9 +109,6 @@ module.exports.createUser = async (req, res, next) => {
     }
     // if (err.name === 'ValidationError') {
     //   return next(new ValidationError('Переданы некорректные данные при создании пользователя'));
-    //   // return res.status(CAST_ERROR_CODE).send({
-    //   //   message: 'Переданы некорректные данные при создании пользователя',
-    //   // });
     // }
     return next(err);
   }
@@ -145,17 +126,11 @@ module.exports.updateUserInfo = async (req, res, next) => {
     );
     if (!user) {
       throw new NotFoundError('Пользователь по указанному id не найден');
-      // return res.status(NOT_FOUND_ERROR_CODE).send(
-      //   { message: 'Пользователь по указанному id не найден' }
-      // );
     }
     return res.send({ data: user });
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new ValidationError('Переданы некорректные данные при обновлении профиля'));
-      // return res.status(CAST_ERROR_CODE).send({
-      //   message: 'Переданы некорректные данные при обновлении профиля',
-      // });
     }
     return next(err);
   }
@@ -173,17 +148,11 @@ module.exports.updateUserAvatar = async (req, res, next) => {
     );
     if (!user) {
       throw new NotFoundError('Пользователь по указанному id не найден');
-      // return res.status(NOT_FOUND_ERROR_CODE).send(
-      //   { message: 'Пользователь по указанному id не найден' }
-      // );
     }
     return res.send({ data: user });
   } catch (err) {
     if (err.name === 'ValidationError') {
       return next(new ValidationError('Переданы некорректные данные при обновлении аватара'));
-      // return res.status(CAST_ERROR_CODE).send({
-      //   message: 'Переданы некорректные данные при обновлении аватара',
-      // });
     }
     return next(err);
   }

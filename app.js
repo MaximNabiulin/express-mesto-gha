@@ -14,7 +14,6 @@ const NotFoundError = require('./errors/NotFoundError');
 const { validateUrl } = require('./utils/validateUrl');
 
 const { PORT = 3000 } = process.env;
-// const NOT_FOUND_ERROR_CODE = 404;
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -37,14 +36,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(limiter);
-
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '6347c242ba83e431ddf3242a',
-//   };
-
-//   next();
-// });
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -69,7 +60,6 @@ app.use('/cards', auth, require('./routes/cards'));
 app.use('*', (req, res, next) => {
   try {
     throw new NotFoundError('Запрашиваемый ресурс не найден');
-    // return res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Запрашиваемый ресурс не найден' });
   } catch (err) {
     return next(err);
   }

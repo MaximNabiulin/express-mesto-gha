@@ -14,6 +14,7 @@ module.exports = (req, res, next) => {
 
   try {
     payload = jwt.verify(authorization, 'ed971b19bc18f2a281a4810fb5aaf2e4');
+    // payload = jwt.verify(authorization, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
   } catch (err) {
     return res
       .status(401)
