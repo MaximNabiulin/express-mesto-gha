@@ -26,14 +26,14 @@ module.exports.login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       res
-        .cookie('authorization', token, {
+        .cookie('authorization', { token }, {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
         })
         .end();
     })
+    // .catch(next(new AuthorizationError('Ошибка Авторизации')));
     .catch(next);
-  // .catch(next(new AuthorizationError('Ошибка Авторизации')));
 };
 
 module.exports.getCurrentUser = async (req, res, next) => {
