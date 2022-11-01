@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const AuthorizationError = require('../errors/AuthorizationError');
 
 module.exports = (req, res, next) => {
-  console.log(req.cookies);
   const { authorization } = req.cookies;
 
   if (!authorization) {

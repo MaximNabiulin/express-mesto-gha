@@ -37,14 +37,14 @@ module.exports.createCard = async (req, res, next) => {
   }
 };
 
+// TODO: Возможно некорректно работает удаление карточек хоть тесты и пройдены:
+// Если падает ошибка невозможности удаления чужой карточки, из базы она все равно удаляется
+// Возможно нужно заменить findByIdAndRemove на findById и  соответственно res.send на res.remove
 module.exports.deleteCard = async (req, res, next) => {
-  // console.log(`user: ${req.user._id}`);
   const { cardId } = req.params;
   const userId = req.user._id;
   try {
     const card = await Card.findByIdAndRemove(cardId);
-    // console.log(`owner: ${card.owner._id}`);
-    // console.log(String(userId) === String(card.owner._id));
     if (!card) {
       throw new NotFoundError('Карточка с указанным id не найдена');
     }
