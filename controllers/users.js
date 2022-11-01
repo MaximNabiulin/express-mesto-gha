@@ -30,7 +30,7 @@ module.exports.login = (req, res, next) => {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
         })
-        .send(token);
+        .end({ data: token, message: 'Успешная Авторизация!' });
     })
     // .catch(next(new AuthorizationError('Ошибка Авторизации')));
     .catch(next);
