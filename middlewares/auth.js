@@ -3,13 +3,11 @@ const jwt = require('jsonwebtoken');
 const AuthorizationError = require('../errors/AuthorizationError');
 
 module.exports = (req, res, next) => {
+  console.log(req.cookies);
   const { authorization } = req.cookies;
 
   if (!authorization) {
     throw new AuthorizationError('Необходима авторизация');
-    // return res
-    //   .status(401)
-    //   .send({ message: 'Необходима авторизация' });
   }
 
   let payload;
@@ -19,9 +17,6 @@ module.exports = (req, res, next) => {
     // payload = jwt.verify(authorization, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
   } catch (err) {
     return next(new AuthorizationError('Необходима авторизация'));
-    // return res
-    //   .status(401)
-    //   .send({ message: 'Необходима авторизация' });
   }
 
   req.user = payload;
