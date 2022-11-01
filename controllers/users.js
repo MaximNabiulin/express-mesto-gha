@@ -26,11 +26,11 @@ module.exports.login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       res
-        .cookie('authorization', { token }, {
+        .cookie('authorization', token, {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
         })
-        .end();
+        .send(token);
     })
     // .catch(next(new AuthorizationError('Ошибка Авторизации')));
     .catch(next);
