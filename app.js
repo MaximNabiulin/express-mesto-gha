@@ -5,13 +5,14 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const { celebrate, Joi, errors } = require('celebrate');
+const { errors } = require('celebrate');
 
-const { login, createUser } = require('./controllers/users');
-const auth = require('./middlewares/auth');
+// const { login, createUser } = require('./controllers/users');
+// const auth = require('./middlewares/auth');
 const error = require('./middlewares/error');
-const NotFoundError = require('./errors/NotFoundError');
-const { validateUrl } = require('./utils/validateUrl');
+const routes = require('./routes');
+// const NotFoundError = require('./errors/NotFoundError');
+// const { validateUrl } = require('./utils/validateUrl');
 
 const { PORT = 3000 } = process.env;
 
@@ -37,33 +38,35 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(limiter);
 
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), login);
+// app.post('/signin', celebrate({
+//   body: Joi.object().keys({
+//     email: Joi.string().required().email(),
+//     password: Joi.string().required().min(8),
+//   }),
+// }), login);
 
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string().custom(validateUrl),
-  }),
-}), createUser);
+// app.post('/signup', celebrate({
+//   body: Joi.object().keys({
+//     email: Joi.string().required().email(),
+//     password: Joi.string().required().min(8),
+//     name: Joi.string().min(2).max(30),
+//     about: Joi.string().min(2).max(30),
+//     avatar: Joi.string().custom(validateUrl),
+//   }),
+// }), createUser);
 
-app.use('/users', auth, require('./routes/users'));
-app.use('/cards', auth, require('./routes/cards'));
+// app.use('/users', auth, require('./routes/users'));
+// app.use('/cards', auth, require('./routes/cards'));
 
-app.use('*', (req, res, next) => {
-  try {
-    throw new NotFoundError('Запрашиваемый ресурс не найден');
-  } catch (err) {
-    return next(err);
-  }
-});
+// app.use('*', (req, res, next) => {
+//   try {
+//     throw new NotFoundError('Запрашиваемый ресурс не найден');
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
+
+app.use(routes);
 
 app.use(errors());
 app.use(error);

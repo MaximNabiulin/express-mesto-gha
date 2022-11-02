@@ -1,6 +1,6 @@
 const Card = require('../models/card');
 
-const CastError = require('../errors/CastError');
+// const CastError = require('../errors/CastError');
 const ValidationError = require('../errors/ValidationError');
 const ForbiddenError = require('../errors/ForbiddenError');
 // const AuthorizationError = require('../errors/AuthorizationError');
@@ -37,24 +37,22 @@ module.exports.createCard = async (req, res, next) => {
   }
 };
 
-// TODO: Возможно некорректно работает удаление карточек хоть тесты и пройдены:
-// Если падает ошибка невозможности удаления чужой карточки, из базы она все равно удаляется
-// Возможно нужно заменить findByIdAndRemove на findById и  соответственно res.send на res.remove
 module.exports.deleteCard = async (req, res, next) => {
   const { cardId } = req.params;
   const userId = req.user._id;
   try {
-    const card = await Card.findByIdAndRemove(cardId);
+    const card = await Card.findById(cardId);
     if (!card) {
       throw new NotFoundError('Карточка с указанным id не найдена');
     }
     if (String(card.owner._id) !== String(userId)) {
       throw new ForbiddenError('Нельзя удалять чужие карточки');
     }
-    return res.send(card);
+    card.remove();
+    return res.send({ message: 'Карточка удалена' });
   } catch (err) {
     if (err.name === 'CastError') {
-      return next(new CastError('Передан некорректный id карточки'));
+      return next(new ValidationError('Передан некорректный id карточки'));
     }
     return next(err);
   }
@@ -76,7 +74,7 @@ module.exports.likeCard = async (req, res, next) => {
     return res.send(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      return next(new CastError('Переданы некорректные данные для постановки лайка'));
+      return next(new ValidationError('Переданы некорректные данные для постановки лайка'));
     }
     return next(err);
   }
@@ -98,7 +96,7 @@ module.exports.dislikeCard = async (req, res, next) => {
     return res.send(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      return next(new CastError('Переданы некорректные данные для снятия лайка'));
+      return next(new ValidationError('Переданы некорректные данные для снятия лайка'));
     }
     return next(err);
   }

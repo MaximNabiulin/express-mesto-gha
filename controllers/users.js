@@ -4,9 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const CastError = require('../errors/CastError');
+// const CastError = require('../errors/CastError');
 const ValidationError = require('../errors/ValidationError');
-const AuthorizationError = require('../errors/AuthorizationError');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 
@@ -16,9 +15,6 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!email || !password) {
-        throw new AuthorizationError('Ошибка Авторизации');
-      }
       const token = jwt.sign(
         { _id: user._id },
         // NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
@@ -36,6 +32,10 @@ module.exports.login = (req, res, next) => {
     .catch(next);
 };
 
+module.exports.logout = (req, res) => {
+  res.clearCookie('authorization').send({ message: 'Вы вышли из аккаунта' });
+};
+
 module.exports.getCurrentUser = async (req, res, next) => {
   const userId = req.user._id;
   try {
@@ -46,7 +46,7 @@ module.exports.getCurrentUser = async (req, res, next) => {
     return res.send({ data: user });
   } catch (err) {
     if (err.name === 'CastError') {
-      return next(new CastError('Передан некорректный id пользователя'));
+      return next(new ValidationError('Передан некорректный id пользователя'));
     }
     return next(err);
   }
@@ -71,7 +71,7 @@ module.exports.getUserById = async (req, res, next) => {
     return res.send({ data: user });
   } catch (err) {
     if (err.name === 'CastError') {
-      return next(new CastError('Передан некорректный id пользователя'));
+      return next(new ValidationError('Передан некорректный id пользователя'));
     }
     return next(err);
   }
@@ -103,13 +103,12 @@ module.exports.createUser = async (req, res, next) => {
       avatar: user.avatar,
     });
   } catch (err) {
-    // console.log(err.name);
     if (err.name === 'MongoServerError' && err.code === 11000) {
       return next(new ConflictError('Такой Email уже зарегистрирован'));
     }
-    // if (err.name === 'ValidationError') {
-    //   return next(new ValidationError('Переданы некорректные данные при создании пользователя'));
-    // }
+    if (err.name === 'ValidationError') {
+      return next(new ValidationError('Переданы некорректные данные при создании пользователя'));
+    }
     return next(err);
   }
 };
